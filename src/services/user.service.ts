@@ -1,3 +1,5 @@
+import type { UserType } from "../schemas/user.schema.js";
+
 export class User {
   private static instance: User;
 
