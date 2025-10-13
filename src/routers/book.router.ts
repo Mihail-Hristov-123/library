@@ -1,23 +1,40 @@
 import Router from "@koa/router";
-import { Book } from "../services/book.service.js";
+import { BookManager } from "../services/book.service.js";
+import { getAppropriateError } from "../utils/setAppropriateError.js";
 
 export const bookRouter = new Router();
 
-const books = Book.getInstance();
+const bookManager = BookManager.getInstance();
 
 bookRouter.get("/books", (ctx) => {
-  ctx.body = books.displayBooks();
+  ctx.body = bookManager.getAllBooks();
+});
+
+bookRouter.get("/books/:title", (ctx) => {
+  const { title } = ctx.params;
+  if (!title) {
+    ctx.status = 400;
+    ctx.body = { message: "Book title parameter is required" };
+    return;
+  }
+  const book = bookManager.findBook(title);
+  if (!book) {
+    ctx.status = 404;
+    ctx.body = { message: `Book ${title} was not found` };
+    return;
+  }
+  ctx.body = book;
 });
 
 bookRouter.post("/books", (ctx) => {
   try {
-    books.addBook(ctx.request.body);
+    bookManager.addBook(ctx.request.body);
     ctx.status = 201;
     ctx.body = { message: "Book added to library" };
   } catch (error) {
     console.error("Error occurred during book addition:", error);
     ctx.status = 400;
-    ctx.body = { message: error };
+    ctx.body = getAppropriateError(error, "Error occurred during book posting");
   }
 });
 
@@ -31,13 +48,16 @@ bookRouter.patch("/books/:title", (ctx) => {
   }
 
   try {
-    books.updateBook(title, ctx.request.body);
-    ctx.status = 201;
+    bookManager.updateBook(title, ctx.request.body);
+    ctx.status = 200;
     ctx.body = { message: `${title} successfully updated` };
   } catch (error) {
     console.error(`An error occurred during book update:`, error);
     ctx.status = 400;
-    ctx.body = { message: error };
+    ctx.body = getAppropriateError(
+      error,
+      "An error occurred during book update"
+    );
   }
 });
 
@@ -49,17 +69,12 @@ bookRouter.delete(`/books/:title`, (ctx) => {
     return;
   }
   try {
-    books.removeBookByTitle(bookTitle);
-    ctx.status = 400;
+    bookManager.removeBookByTitle(bookTitle);
+    ctx.status = 200;
     ctx.body = { message: `${bookTitle} deleted successfully` };
   } catch (error) {
     console.error(`An error occurred during book deletion: ${error}`);
     ctx.status = 404;
-    ctx.body = {
-      message:
-        error instanceof Error
-          ? error.message
-          : "An unknown error occurred during book removal",
-    };
+    ctx.body = getAppropriateError(error, "Error occurred during book removal");
   }
 });
