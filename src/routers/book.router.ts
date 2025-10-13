@@ -15,6 +15,27 @@ bookRouter.post("/books", (ctx) => {
     ctx.status = 201;
     ctx.body = { message: "Book added to library" };
   } catch (error) {
+    console.error("Error occurred during book addition:", error);
+    ctx.status = 400;
+    ctx.body = { message: error };
+  }
+});
+
+bookRouter.patch("/books/:title", (ctx) => {
+  const { title } = ctx.params;
+
+  if (!title) {
+    ctx.status = 400;
+    ctx.body = { message: "Book title parameter is required" };
+    return;
+  }
+
+  try {
+    books.updateBook(title, ctx.request.body);
+    ctx.status = 201;
+    ctx.body = { message: `${title} successfully updated` };
+  } catch (error) {
+    console.error(`An error occurred during book update:`, error);
     ctx.status = 400;
     ctx.body = { message: error };
   }

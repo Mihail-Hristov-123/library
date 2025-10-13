@@ -27,6 +27,31 @@ export class Book {
     return result;
   }
 
+  private findBookIndex(title: string) {
+    return this.books.findIndex((book) => book.title == title);
+  }
+
+  updateBook(title: string, newInfo: unknown) {
+    const book = this.findBook(title);
+
+    const newContent = typeof newInfo === "object" ? { ...newInfo } : {};
+
+    const result = BookSchema.safeParse({ ...book, ...newContent });
+
+    if (!result.success) {
+      console.error(`Book validation error:`, result.error);
+      throw new Error("Book updating error");
+    }
+
+    const bookIndex = this.findBookIndex(title);
+
+    if (bookIndex === -1)
+      throw new Error(`Book ${title} was not found in the library`);
+    this.books[bookIndex] = result.data;
+
+    console.log(`${title} was successfully updated`);
+  }
+
   addBook(newBook: unknown) {
     const result = BookSchema.safeParse(newBook);
     if (!result.success) {
