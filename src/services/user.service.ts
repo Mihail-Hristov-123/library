@@ -1,20 +1,68 @@
-import type { UserType } from "../schemas/user.schema.js";
+import z from "zod";
+import { UserSchema, type UserType } from "../schemas/user.schema.js";
+import * as bcrypt from "bcrypt";
+import * as jwt from "jsonwebtoken";
+import { LoginSchema } from "../schemas/login.schema.js";
+import { CustomError } from "../CustomError.js";
 
-export class User {
-  private static instance: User;
+export class UserManager {
+  private static instance: UserManager;
 
   private users: UserType[] = [];
 
   private constructor() {}
 
   static getInstance() {
-    if (!User.instance) {
-      User.instance = new User();
+    if (!UserManager.instance) {
+      UserManager.instance = new UserManager();
     }
-    return User.instance;
+    return UserManager.instance;
   }
 
-  getUsers() {
-    return this.users;
+  private findUser(email: string) {
+    return this.users.find((user) => (user.email = email));
+  }
+
+  async createUser(userInfo: unknown) {
+    const { error, data } = UserSchema.safeParse(userInfo);
+    if (error) {
+      console.error(`Error occurred during registration: ${error}`);
+      throw new CustomError("VALIDATION", z.prettifyError(error));
+    }
+
+    const { email, name, password } = data;
+    if (this.users.find((user) => user.email === email)) {
+      throw new CustomError("CONFLICT", `Email ${email} is already used`);
+    }
+
+    const hashedPass = await bcrypt.hash(password, 10);
+    this.users.push({
+      ...data,
+      password: hashedPass,
+    });
+
+    return { name, email };
+  }
+
+  async checkCredentials(loginData: unknown) {
+    const { error, data } = LoginSchema.safeParse(loginData);
+
+    if (error) {
+      console.error(`Error occurred during login: ${error}`);
+      throw new CustomError("VALIDATION", z.prettifyError(error));
+    }
+    const { email, password } = data;
+
+    const account = this.findUser(email);
+
+    if (!account) {
+      console.error(
+        `Error occurred during login: account with email ${email} doesn't exist`
+      );
+      throw new CustomError("AUTHENTICATION", `Account not found`);
+    }
+
+    const passwordCorrect = await bcrypt.compare(password, account.password);
+    return passwordCorrect;
   }
 }
