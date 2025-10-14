@@ -16,7 +16,7 @@ const isJwtPayloadWithEmail = (
   );
 };
 
-export const requireAuth: Middleware = async (ctx: Context, next) => {
+export const requireAuthentication: Middleware = async (ctx: Context, next) => {
   const token = ctx.cookies.get("accessToken");
   if (!token) {
     ctx.status = 401;

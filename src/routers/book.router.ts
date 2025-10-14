@@ -1,7 +1,7 @@
 import Router from "@koa/router";
 import { BookManager } from "../services/book.service.js";
 import { getAppropriateError } from "../utils/getAppropriateError.js";
-import { requireAuth } from "../middlewares/requireAuthentication.js";
+import { requireAuthentication } from "../middlewares/requireAuthentication.js";
 import { requireAuthorization } from "../middlewares/requireAuthorization.js";
 
 export const bookRouter = new Router();
@@ -28,7 +28,7 @@ bookRouter.get("/books/:title", (ctx) => {
   ctx.body = book;
 });
 
-bookRouter.post("/books", requireAuth, (ctx) => {
+bookRouter.post("/books", requireAuthentication, (ctx) => {
   try {
     bookManager.addBook({ ...ctx.request.body, publisher: ctx.userEmail });
     ctx.status = 201;

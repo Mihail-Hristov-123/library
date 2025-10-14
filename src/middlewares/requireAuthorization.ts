@@ -1,13 +1,13 @@
 import type { Context, Middleware } from "koa";
 
 import { BookManager } from "../services/book.service.js";
-import { requireAuth } from "./requireAuthentication.js";
+import { requireAuthentication } from "./requireAuthentication.js";
 
 const bookManager = BookManager.getInstance();
 
 export const requireAuthorization: Middleware = async (ctx: Context, next) => {
   if (!ctx.userEmail) {
-    await requireAuth(ctx, async () => {});
+    await requireAuthentication(ctx, async () => {});
     if (ctx.status === 401) {
       return;
     }
@@ -34,6 +34,7 @@ export const requireAuthorization: Middleware = async (ctx: Context, next) => {
     return;
   }
 
-  ctx.bookTitle = book.title;
+  ctx.bookTitle = title;
+
   await next();
 };
