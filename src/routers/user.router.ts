@@ -5,7 +5,7 @@ import { signJWT } from "../utils/signJWT.js";
 
 import { CustomError } from "../CustomError.js";
 import { setAccessTokenCookie } from "../utils/setAccessTokenCookie.js";
-import { requireAuth } from "../middlewares/requireAuth.js";
+import { requireAuth } from "../middlewares/requireAuthentication.js";
 
 export const userRouter = new Router();
 

@@ -20,20 +20,18 @@ export class BookManager {
   }
 
   findBook(title: string) {
-    const result = this.books.find((book) => book.title == title);
-    return result;
+    return this.books.find((book) => book.title == title);
   }
 
   findBookIndex(title: string) {
-    const index = this.books.findIndex((book) => book.title == title);
-    return index;
+    return this.books.findIndex((book) => book.title == title);
   }
 
   updateBook(title: string, newInfo: unknown) {
     const bookIndex = this.findBookIndex(title);
 
     if (bookIndex === -1) {
-      throw new Error(`Book ${title} was not found`);
+      throw new Error(`Here- Book ${title} was not found`);
     }
     const book = this.books[bookIndex];
 

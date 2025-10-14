@@ -1,7 +1,8 @@
 import Router from "@koa/router";
 import { BookManager } from "../services/book.service.js";
 import { getAppropriateError } from "../utils/getAppropriateError.js";
-import { requireAuth } from "../middlewares/requireAuth.js";
+import { requireAuth } from "../middlewares/requireAuthentication.js";
+import { requireAuthorization } from "../middlewares/requireAuthorization.js";
 
 export const bookRouter = new Router();
 
@@ -39,15 +40,9 @@ bookRouter.post("/books", requireAuth, (ctx) => {
   }
 });
 
-bookRouter.patch("/books/:title", requireAuth, (ctx) => {
-  const { title } = ctx.params;
-
-  if (!title) {
-    ctx.status = 400;
-    ctx.body = { message: "Book title parameter is required" };
-    return;
-  }
-
+bookRouter.patch("/books/:title", requireAuth, requireAuthorization, (ctx) => {
+  const title = ctx.bookTitle;
+  console.log(ctx.bookTitle);
   try {
     bookManager.updateBook(title, ctx.request.body);
     ctx.status = 200;
@@ -62,13 +57,8 @@ bookRouter.patch("/books/:title", requireAuth, (ctx) => {
   }
 });
 
-bookRouter.delete(`/books/:title`, requireAuth, (ctx) => {
-  const { title: bookTitle } = ctx.params;
-  if (!bookTitle) {
-    ctx.status = 400;
-    ctx.body = { message: "Book title parameter is required" };
-    return;
-  }
+bookRouter.delete(`/books/:title`, requireAuth, requireAuthorization, (ctx) => {
+  const { bookTitle } = ctx;
   try {
     bookManager.removeBookByTitle(bookTitle);
     ctx.status = 200;
