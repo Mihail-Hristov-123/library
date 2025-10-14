@@ -1,13 +1,9 @@
-import { configDotenv } from "dotenv";
 import jwt from "jsonwebtoken";
-
-configDotenv();
-const jwtKey = process.env.JWT_KEY;
+import { env } from "../config/env.js";
 
 export const signJWT = (email: string) => {
   try {
-    if (!jwtKey) throw new Error("Invalid server setup");
-    const token = jwt.sign({ email }, jwtKey, { expiresIn: "1d" });
+    const token = jwt.sign({ email }, env.JWT_KEY, { expiresIn: "1d" });
     return token;
   } catch (error) {
     console.error(`Error occurred during JWT signing ${error}`);

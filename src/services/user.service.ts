@@ -22,6 +22,10 @@ export class UserManager {
     return this.users.find((user) => user.email === email);
   }
 
+  checkUserExistence(email: string) {
+    return Boolean(this.findUser(email));
+  }
+
   async createUser(userInfo: unknown) {
     const { error, data } = UserSchema.safeParse(userInfo);
     if (error) {
