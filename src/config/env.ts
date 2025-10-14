@@ -1,6 +1,6 @@
 import { configDotenv } from "dotenv";
 
-configDotenv();
+configDotenv({ quiet: true });
 
 const JWT_KEY = process.env.JWT_KEY;
 const PORT = process.env.PORT || 3000;

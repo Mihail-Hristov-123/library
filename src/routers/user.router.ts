@@ -5,6 +5,7 @@ import { signJWT } from "../utils/signJWT.js";
 
 import { CustomError } from "../CustomError.js";
 import { setAccessTokenCookie } from "../utils/setAccessTokenCookie.js";
+import { requireAuth } from "../middlewares/requireAuth.js";
 
 export const userRouter = new Router();
 
@@ -24,7 +25,7 @@ userRouter.post("/users/register", async (ctx) => {
   }
 });
 
-userRouter.post("/users/logout", (ctx) => {
+userRouter.post("/users/logout", requireAuth, (ctx) => {
   ctx.cookies.set("accessToken", null, {
     httpOnly: true,
     maxAge: 0,

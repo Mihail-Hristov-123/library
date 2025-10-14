@@ -29,7 +29,7 @@ bookRouter.get("/books/:title", (ctx) => {
 
 bookRouter.post("/books", requireAuth, (ctx) => {
   try {
-    bookManager.addBook(ctx.request.body);
+    bookManager.addBook({ ...ctx.request.body, publisher: ctx.userEmail });
     ctx.status = 201;
     ctx.body = { message: "Book added to library" };
   } catch (error) {
