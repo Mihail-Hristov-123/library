@@ -1,5 +1,5 @@
 import z from "zod";
-import { UserSchema, type UserType } from "../schemas/user.schema.js";
+import { UserSchema } from "../schemas/user.schema.js";
 import * as bcrypt from "bcrypt";
 import { LoginSchema } from "../schemas/login.schema.js";
 import { CustomError } from "../CustomError.js";
