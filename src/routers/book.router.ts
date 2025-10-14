@@ -1,6 +1,6 @@
 import Router from "@koa/router";
 import { BookManager } from "../services/book.service.js";
-import { getAppropriateError } from "../utils/setAppropriateError.js";
+import { getAppropriateError } from "../utils/getAppropriateError.js";
 
 export const bookRouter = new Router();
 

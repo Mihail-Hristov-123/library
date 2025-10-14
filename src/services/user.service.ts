@@ -1,7 +1,6 @@
 import z from "zod";
 import { UserSchema, type UserType } from "../schemas/user.schema.js";
 import * as bcrypt from "bcrypt";
-import * as jwt from "jsonwebtoken";
 import { LoginSchema } from "../schemas/login.schema.js";
 import { CustomError } from "../CustomError.js";
 
@@ -20,13 +19,12 @@ export class UserManager {
   }
 
   private findUser(email: string) {
-    return this.users.find((user) => (user.email = email));
+    return this.users.find((user) => user.email === email);
   }
 
   async createUser(userInfo: unknown) {
     const { error, data } = UserSchema.safeParse(userInfo);
     if (error) {
-      console.error(`Error occurred during registration: ${error}`);
       throw new CustomError("VALIDATION", z.prettifyError(error));
     }
 
@@ -48,7 +46,6 @@ export class UserManager {
     const { error, data } = LoginSchema.safeParse(loginData);
 
     if (error) {
-      console.error(`Error occurred during login: ${error}`);
       throw new CustomError("VALIDATION", z.prettifyError(error));
     }
     const { email, password } = data;
@@ -56,9 +53,6 @@ export class UserManager {
     const account = this.findUser(email);
 
     if (!account) {
-      console.error(
-        `Error occurred during login: account with email ${email} doesn't exist`
-      );
       throw new CustomError("AUTHENTICATION", `Account not found`);
     }
 
