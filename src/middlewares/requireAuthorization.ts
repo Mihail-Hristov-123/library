@@ -1,10 +1,18 @@
 import type { Context, Middleware } from "koa";
 
 import { BookManager } from "../services/book.service.js";
+import { requireAuth } from "./requireAuthentication.js";
 
 const bookManager = BookManager.getInstance();
 
 export const requireAuthorization: Middleware = async (ctx: Context, next) => {
+  if (!ctx.userEmail) {
+    await requireAuth(ctx, async () => {});
+    if (ctx.status === 401) {
+      return;
+    }
+  }
+
   const { title } = ctx.params;
   if (!title) {
     ctx.status = 400;
@@ -21,7 +29,7 @@ export const requireAuthorization: Middleware = async (ctx: Context, next) => {
   }
 
   if (book.publisher !== ctx.userEmail) {
-    ctx.status = 401;
+    ctx.status = 403;
     ctx.body = { message: "A book can only be modified by its publisher" };
     return;
   }

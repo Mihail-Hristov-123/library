@@ -37,7 +37,7 @@ export class BookManager {
 
     const newContent = typeof newInfo === "object" ? { ...newInfo } : {};
 
-    const result = BookSchema.safeParse({ ...book, ...newContent });
+    const result = BookSchema.safeParse({ ...book, ...newContent, title }); // avoid title update on purpose
 
     if (!result.success) {
       console.error(`Book validation error:`, result.error);

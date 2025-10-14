@@ -40,7 +40,7 @@ bookRouter.post("/books", requireAuth, (ctx) => {
   }
 });
 
-bookRouter.patch("/books/:title", requireAuth, requireAuthorization, (ctx) => {
+bookRouter.patch("/books/:title", requireAuthorization, (ctx) => {
   const title = ctx.bookTitle;
   console.log(ctx.bookTitle);
   try {
@@ -57,7 +57,7 @@ bookRouter.patch("/books/:title", requireAuth, requireAuthorization, (ctx) => {
   }
 });
 
-bookRouter.delete(`/books/:title`, requireAuth, requireAuthorization, (ctx) => {
+bookRouter.delete(`/books/:title`, requireAuthorization, (ctx) => {
   const { bookTitle } = ctx;
   try {
     bookManager.removeBookByTitle(bookTitle);
