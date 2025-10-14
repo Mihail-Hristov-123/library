@@ -1,7 +1,8 @@
 import type { Context, Middleware } from "koa";
 import jwt from "jsonwebtoken";
-import { env } from "../config/env.js";
+
 import { UserManager } from "../services/user.service.js";
+import env from "../config/env.js";
 
 const userManager = UserManager.getInstance();
 

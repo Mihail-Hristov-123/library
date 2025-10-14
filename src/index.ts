@@ -1,5 +1,5 @@
 import Koa from "koa";
-import { env } from "./config/env.js";
+import env from "./config/env.js";
 import { bookRouter } from "./routers/book.router.js";
 import { userRouter } from "./routers/user.router.js";
 import { bodyParser } from "@koa/bodyparser";
