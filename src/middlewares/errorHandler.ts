@@ -5,6 +5,13 @@ export const errorHandler: Middleware = async (ctx, next) => {
   try {
     await next();
   } catch (error) {
+    if (error instanceof AggregateError) {
+      console.error("Multiple errors caught in middleware:");
+      error.errors.forEach(console.error);
+    } else {
+      console.error("Error caught in middleware:", error);
+    }
+
     if (error instanceof CustomError) {
       ctx.status = error.statusCode;
       ctx.body = { errorType: error.type, message: error.message };
@@ -13,8 +20,7 @@ export const errorHandler: Middleware = async (ctx, next) => {
 
     ctx.status = 500;
     ctx.body = {
-      errorType: "UnknownServerError",
-      message: error instanceof Error ? error.message : String(error),
+      message: "Unknown Server Error",
     };
   }
 };

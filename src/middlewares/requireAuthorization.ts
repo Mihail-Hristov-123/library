@@ -3,6 +3,7 @@ import type { Context, Middleware } from "koa";
 import { BookManager } from "../services/book.service.js";
 import { requireAuthentication } from "./requireAuthentication.js";
 import { CustomError } from "../CustomError.js";
+import { handleMissingTitleParam } from "../utils/handleMissingTitleParam.js";
 
 const bookManager = BookManager.getInstance();
 
@@ -12,12 +13,8 @@ export const requireAuthorization: Middleware = async (ctx: Context, next) => {
   }
 
   const { title } = ctx.params;
-  if (!title) {
-    throw new CustomError(
-      "CLIENT",
-      "Book title is required in the request parameters"
-    );
-  }
+
+  handleMissingTitleParam(title);
 
   const book = await bookManager.findBook(title);
 
