@@ -2,36 +2,34 @@ import type { Context, Middleware } from "koa";
 
 import { BookManager } from "../services/book.service.js";
 import { requireAuthentication } from "./requireAuthentication.js";
+import { CustomError } from "../CustomError.js";
 
 const bookManager = BookManager.getInstance();
 
 export const requireAuthorization: Middleware = async (ctx: Context, next) => {
   if (!ctx.userEmail) {
     await requireAuthentication(ctx, async () => {});
-    if (ctx.status === 401) {
-      return;
-    }
   }
 
   const { title } = ctx.params;
   if (!title) {
-    ctx.status = 400;
-    ctx.body = { message: "Book title parameter is required" };
-    return;
+    throw new CustomError(
+      "CLIENT",
+      "Book title is required in the request parameters"
+    );
   }
 
   const book = await bookManager.findBook(title);
 
   if (!book) {
-    ctx.status = 404;
-    ctx.body = { message: "Book was not found" };
-    return;
+    throw new CustomError("NOT_FOUND", `Book ${title} was not found`);
   }
 
   if (book.publisher_id !== ctx.userId) {
-    ctx.status = 403;
-    ctx.body = { message: "A book can only be modified by its publisher" };
-    return;
+    throw new CustomError(
+      "AUTHORIZATION",
+      "A book can only be modified by its owner"
+    );
   }
 
   ctx.bookTitle = title;

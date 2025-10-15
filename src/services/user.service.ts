@@ -19,12 +19,12 @@ export class UserManager {
     return UserManager.instance;
   }
 
-  async findUser(id: number) {
-    return await this.userRepository.findUser(id);
+  findUser(id: number) {
+    return this.userRepository.findUser(id);
   }
 
-  async findUserByEmail(email: string) {
-    return await this.userRepository.findUserByEmail(email);
+  findUserByEmail(email: string) {
+    return this.userRepository.findUserByEmail(email);
   }
 
   async checkEmailTaken(email: string) {
@@ -34,7 +34,10 @@ export class UserManager {
   async createUser(userInfo: unknown) {
     const { error, data } = UserSchema.safeParse(userInfo);
     if (error) {
-      throw new CustomError("VALIDATION", z.prettifyError(error));
+      throw new CustomError(
+        "VALIDATION",
+        `Error occurred during user info validation: ${z.prettifyError(error)}`
+      );
     }
 
     const { email, name, password } = data;
@@ -44,7 +47,13 @@ export class UserManager {
       throw new CustomError("CONFLICT", `Email ${email} is already used`);
     }
 
-    const hashedPass = await bcrypt.hash(password, 10);
+    let hashedPass;
+    try {
+      hashedPass = await bcrypt.hash(password, 10);
+    } catch (error) {
+      throw new CustomError("SERVER", `Password hashing error: ${error}`);
+    }
+
     await this.userRepository.create({ email, name, password: hashedPass });
 
     return { name, email };
@@ -64,7 +73,11 @@ export class UserManager {
       throw new CustomError("AUTHENTICATION", `Account not found`);
     }
 
-    const passwordCorrect = await bcrypt.compare(password, account.password);
-    return passwordCorrect;
+    try {
+      const passwordCorrect = await bcrypt.compare(password, account.password);
+      return passwordCorrect;
+    } catch (error) {
+      throw new CustomError("SERVER", `Password verification error: ${error}`);
+    }
   }
 }

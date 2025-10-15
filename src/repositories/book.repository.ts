@@ -15,7 +15,9 @@ export class BookRepository {
   }
 
   createBook(bookInfo: BookType, userId: number) {
-    return db("books").insert({ ...bookInfo, publisher_id: userId });
+    return db("books")
+      .insert({ ...bookInfo, publisher_id: userId })
+      .returning("*");
   }
 
   removeBook(title: string) {

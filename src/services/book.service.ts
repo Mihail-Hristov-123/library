@@ -1,6 +1,7 @@
 import z from "zod";
 import { BookSchema, type BookType } from "../schemas/book.schema.js";
 import { BookRepository } from "../repositories/book.repository.js";
+import { CustomError } from "../CustomError.js";
 
 export class BookManager {
   private static instance: BookManager;
@@ -20,20 +21,31 @@ export class BookManager {
     return this.booksRepository.getAllBooks();
   }
 
-  async findBook(title: string) {
-    return await this.booksRepository.findBookByTitle(title);
+  findBook(title: string) {
+    return this.booksRepository.findBookByTitle(title);
   }
 
   async updateBook(title: string, newInfo: unknown) {
     const bookFound = await this.findBook(title);
 
-    const newContent = typeof newInfo === "object" ? { ...newInfo } : {};
+    if (!bookFound) {
+      throw new CustomError(
+        "NOT_FOUND",
+        `Book ${title} was not found - it cannot be updated`
+      );
+    }
 
-    const result = BookSchema.safeParse({ ...bookFound, ...newContent });
+    if (typeof newInfo !== "object") {
+      throw new CustomError("CLIENT", "Incorrect request body type");
+    }
 
-    if (!result.success) {
-      console.error(`Book validation error:`, result.error);
-      throw new Error("Book updating error");
+    const result = BookSchema.safeParse({ ...bookFound, ...newInfo });
+
+    if (result.error) {
+      throw new CustomError(
+        "VALIDATION",
+        `Error occurred during book update: ${z.prettifyError(result.error)}`
+      );
     }
 
     await this.booksRepository.updateBook(title, result.data);
@@ -42,9 +54,11 @@ export class BookManager {
   async addBook(newBook: unknown, userId: number) {
     const result = BookSchema.safeParse(newBook);
 
-    if (!result.success) {
-      console.error(`Book validation error:`, result.error);
-      throw new Error(`Book addition error: ${z.prettifyError(result.error)}`);
+    if (result.error) {
+      throw new CustomError(
+        "VALIDATION",
+        `Error in book validation: ${z.prettifyError(result.error)}`
+      );
     }
 
     await this.booksRepository.createBook(result.data, userId);
