@@ -13,6 +13,11 @@ export class BookRepository {
   updateBook(title: string, bookInfo: BookType) {
     return db("books").update(bookInfo).where({ title });
   }
+  findBooksByPublisher(publisherId: number) {
+    return db<BookResponseType[]>("books")
+      .select("*")
+      .where("books.publisher_id", publisherId);
+  }
 
   createBook(bookInfo: BookType, userId: number) {
     return db("books")

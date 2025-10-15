@@ -8,7 +8,7 @@ import { UserRepository } from "../repositories/user.repository.js";
 export class UserManager {
   private static instance: UserManager;
 
-  userRepository = new UserRepository();
+  private userRepository = new UserRepository();
 
   private constructor() {}
 
@@ -51,7 +51,7 @@ export class UserManager {
     try {
       hashedPass = await bcrypt.hash(password, 10);
     } catch (error) {
-      throw new CustomError("SERVER", `Password hashing error: ${error}`);
+      throw new CustomError("SERVER", `Password hashing error`);
     }
 
     const [user] = await this.userRepository.create({
@@ -80,7 +80,7 @@ export class UserManager {
       const passwordCorrect = await bcrypt.compare(password, account.password);
       return passwordCorrect;
     } catch (error) {
-      throw new CustomError("SERVER", `Password verification error: ${error}`);
+      throw new CustomError("SERVER", `Password verification error`);
     }
   }
 }

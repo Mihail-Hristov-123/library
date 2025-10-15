@@ -6,7 +6,7 @@ import { CustomError } from "../CustomError.js";
 export class BookManager {
   private static instance: BookManager;
 
-  booksRepository = new BookRepository();
+  private booksRepository = new BookRepository();
 
   private constructor() {}
 
@@ -23,6 +23,10 @@ export class BookManager {
 
   findBook(title: string) {
     return this.booksRepository.findBookByTitle(title);
+  }
+
+  findBooksByPublisher(userId: number) {
+    return this.booksRepository.findBooksByPublisher(userId);
   }
 
   async updateBook(title: string, newInfo: unknown) {

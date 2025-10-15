@@ -6,9 +6,18 @@ import { CustomError } from "../CustomError.js";
 import { setAccessTokenCookie } from "../utils/setAccessTokenCookie.js";
 import { requireAuthentication } from "../middlewares/requireAuthentication.js";
 
+import { UserBooksManager } from "../services/userBooks.service.js";
+
 export const userRouter = new Router({ prefix: "/users" });
 
 const userManager = UserManager.getInstance();
+const userBooksManager = UserBooksManager.getInstance();
+
+userRouter.get("/:id", async (ctx) => {
+  const userId = Number(ctx.params.id);
+  const userDashboard = await userBooksManager.getUserDashboard(userId);
+  ctx.body = userDashboard;
+});
 
 userRouter.post("/register", async (ctx) => {
   const createdUser = await userManager.createUser(ctx.request.body);

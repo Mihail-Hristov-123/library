@@ -11,4 +11,4 @@ export const UserSchema = LoginSchema.extend({
 
 export type UserType = z.infer<typeof UserSchema>;
 
-export type UserResponseType = UserType & { id: number };
+export type UserResponseType = UserType & { id: number; creation_date: string };
