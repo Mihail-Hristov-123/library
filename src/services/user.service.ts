@@ -54,9 +54,12 @@ export class UserManager {
       throw new CustomError("SERVER", `Password hashing error: ${error}`);
     }
 
-    await this.userRepository.create({ email, name, password: hashedPass });
-
-    return { name, email };
+    const [user] = await this.userRepository.create({
+      email,
+      name,
+      password: hashedPass,
+    });
+    return user;
   }
 
   async checkCredentials(loginData: unknown) {

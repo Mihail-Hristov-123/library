@@ -6,7 +6,9 @@ import {
 
 export class UserRepository {
   create(userInfo: UserType) {
-    return db("users").insert(userInfo).returning("*");
+    return db<UserResponseType>("users")
+      .insert(userInfo)
+      .returning(["email", "name"]);
   }
 
   findUser(userId: number) {
