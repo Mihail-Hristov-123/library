@@ -19,12 +19,16 @@ export class UserManager {
     return UserManager.instance;
   }
 
-  private async findUser(email: string) {
-    return await this.userRepository.findByEmail(email);
+  async findUser(id: number) {
+    return await this.userRepository.findUser(id);
   }
 
-  checkUserExistence(email: string) {
-    return Boolean(this.findUser(email));
+  async findUserByEmail(email: string) {
+    return await this.userRepository.findUserByEmail(email);
+  }
+
+  async checkEmailTaken(email: string) {
+    return Boolean(await this.userRepository.findUserByEmail(email));
   }
 
   async createUser(userInfo: unknown) {
@@ -34,7 +38,7 @@ export class UserManager {
     }
 
     const { email, name, password } = data;
-    const emailUsed = await this.findUser(email);
+    const emailUsed = await this.checkEmailTaken(email);
 
     if (emailUsed) {
       throw new CustomError("CONFLICT", `Email ${email} is already used`);
@@ -54,7 +58,7 @@ export class UserManager {
     }
     const { email, password } = data;
 
-    const account = await this.findUser(email);
+    const account = await this.findUserByEmail(email);
 
     if (!account) {
       throw new CustomError("AUTHENTICATION", `Account not found`);

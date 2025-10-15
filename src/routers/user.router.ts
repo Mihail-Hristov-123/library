@@ -7,11 +7,11 @@ import { CustomError } from "../CustomError.js";
 import { setAccessTokenCookie } from "../utils/setAccessTokenCookie.js";
 import { requireAuthentication } from "../middlewares/requireAuthentication.js";
 
-export const userRouter = new Router();
+export const userRouter = new Router({ prefix: "/users" });
 
 const userManager = UserManager.getInstance();
 
-userRouter.post("/users/register", async (ctx) => {
+userRouter.post("/register", async (ctx) => {
   try {
     const { name, email } = await userManager.createUser(ctx.request.body);
     const token = signJWT(email);
@@ -25,7 +25,7 @@ userRouter.post("/users/register", async (ctx) => {
   }
 });
 
-userRouter.post("/users/logout", requireAuthentication, (ctx) => {
+userRouter.post("/logout", requireAuthentication, (ctx) => {
   ctx.cookies.set("accessToken", null, {
     httpOnly: true,
     maxAge: 0,
@@ -34,7 +34,7 @@ userRouter.post("/users/logout", requireAuthentication, (ctx) => {
   ctx.body = { message: "Logged out successfully" };
 });
 
-userRouter.post("/users/login", async (ctx) => {
+userRouter.post("/login", async (ctx) => {
   try {
     const credentialsValid = await userManager.checkCredentials(
       ctx.request.body

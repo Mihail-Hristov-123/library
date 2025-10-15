@@ -1,5 +1,7 @@
 import type { Knex } from "knex";
 
+const currentYear = new Date().getFullYear();
+
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable("books", (table) => {
     table.increments("id").primary();
@@ -20,13 +22,21 @@ export async function up(knex: Knex): Promise<void> {
     table
       .integer("publicationYear")
       .notNullable()
-      .checkBetween([1450, new Date().getFullYear()]);
+      .checkBetween([1450, currentYear]);
 
     table
       .text("description")
       .notNullable()
       .checkLength(">=", 20)
       .checkLength("<=", 200);
+
+    table
+      .integer("publisher_id")
+      .unsigned()
+      .notNullable()
+      .references("id")
+      .inTable("users")
+      .onDelete("CASCADE");
   });
 }
 

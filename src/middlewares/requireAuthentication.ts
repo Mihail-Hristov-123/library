@@ -27,14 +27,18 @@ export const requireAuthentication: Middleware = async (ctx: Context, next) => {
 
   try {
     const payload = jwt.verify(token, env.JWT_KEY);
-    if (
-      !isJwtPayloadWithEmail(payload) ||
-      !userManager.checkUserExistence(payload.email)
-    ) {
-      throw new Error("Invalid or incomplete access token");
+    if (!isJwtPayloadWithEmail(payload)) {
+      throw new Error("Incomplete access token");
     }
 
+    const userWithEmail = await userManager.findUserByEmail(payload.email);
+    if (!userWithEmail) {
+      throw new Error("Invalid access token");
+    }
+
+    ctx.userId = userWithEmail.id;
     ctx.userEmail = payload.email;
+
     await next();
   } catch (error) {
     console.error("Authentication error:", error);

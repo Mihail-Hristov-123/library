@@ -4,5 +4,6 @@ declare module "koa" {
   interface Context {
     userEmail?: string;
     bookTitle?: string;
+    userId?: number;
   }
 }

@@ -20,7 +20,7 @@ export const requireAuthorization: Middleware = async (ctx: Context, next) => {
     return;
   }
 
-  const book = bookManager.findBook(title);
+  const book = await bookManager.findBook(title);
 
   if (!book) {
     ctx.status = 404;
@@ -28,7 +28,7 @@ export const requireAuthorization: Middleware = async (ctx: Context, next) => {
     return;
   }
 
-  if (book.publisher !== ctx.userEmail) {
+  if (book.publisher_id !== ctx.userId) {
     ctx.status = 403;
     ctx.body = { message: "A book can only be modified by its publisher" };
     return;

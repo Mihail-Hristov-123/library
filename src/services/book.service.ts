@@ -1,10 +1,11 @@
 import z from "zod";
 import { BookSchema, type BookType } from "../schemas/book.schema.js";
+import { BookRepository } from "../repositories/book.repository.js";
 
 export class BookManager {
   private static instance: BookManager;
 
-  private books: BookType[] = [];
+  booksRepository = new BookRepository();
 
   private constructor() {}
 
@@ -16,40 +17,29 @@ export class BookManager {
   }
 
   getAllBooks() {
-    return this.books;
+    return this.booksRepository.getAllBooks();
   }
 
-  findBook(title: string) {
-    return this.books.find((book) => book.title == title);
+  async findBook(title: string) {
+    return await this.booksRepository.findBookByTitle(title);
   }
 
-  findBookIndex(title: string) {
-    return this.books.findIndex((book) => book.title == title);
-  }
-
-  updateBook(title: string, newInfo: unknown) {
-    const bookIndex = this.findBookIndex(title);
-
-    if (bookIndex === -1) {
-      throw new Error(`Here- Book ${title} was not found`);
-    }
-    const book = this.books[bookIndex];
+  async updateBook(title: string, newInfo: unknown) {
+    const bookFound = await this.findBook(title);
 
     const newContent = typeof newInfo === "object" ? { ...newInfo } : {};
 
-    const result = BookSchema.safeParse({ ...book, ...newContent, title }); // avoid title update on purpose
+    const result = BookSchema.safeParse({ ...bookFound, ...newContent });
 
     if (!result.success) {
       console.error(`Book validation error:`, result.error);
       throw new Error("Book updating error");
     }
 
-    this.books[bookIndex] = result.data;
-
-    console.log(`${title} was successfully updated`);
+    await this.booksRepository.updateBook(title, result.data);
   }
 
-  addBook(newBook: unknown) {
+  async addBook(newBook: unknown, userId: number) {
     const result = BookSchema.safeParse(newBook);
 
     if (!result.success) {
@@ -57,22 +47,10 @@ export class BookManager {
       throw new Error(`Book addition error: ${z.prettifyError(result.error)}`);
     }
 
-    const title = result.data.title;
-
-    if (this.findBook(title)) {
-      throw new Error(`Book ${title} already exists`);
-    }
-
-    this.books.push(result.data);
-    console.log(`Book ${title} successfully added to library`);
+    await this.booksRepository.createBook(result.data, userId);
   }
 
-  removeBookByTitle(bookTitle: string) {
-    const index = this.findBookIndex(bookTitle);
-    if (index === -1) {
-      throw new Error(`Book ${bookTitle} was not found`);
-    }
-    this.books.splice(index, 1);
-    console.log(`${bookTitle} was successfully removed from the library`);
+  async removeBookByTitle(bookTitle: string) {
+    await this.booksRepository.removeBook(bookTitle);
   }
 }

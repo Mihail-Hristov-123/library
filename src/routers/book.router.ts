@@ -3,23 +3,24 @@ import { BookManager } from "../services/book.service.js";
 import { getAppropriateError } from "../utils/getAppropriateError.js";
 import { requireAuthentication } from "../middlewares/requireAuthentication.js";
 import { requireAuthorization } from "../middlewares/requireAuthorization.js";
+import type { Context } from "koa";
 
-export const bookRouter = new Router();
+export const bookRouter = new Router({ prefix: "/books" });
 
 const bookManager = BookManager.getInstance();
 
-bookRouter.get("/books", (ctx) => {
-  ctx.body = bookManager.getAllBooks();
+bookRouter.get("/", async (ctx) => {
+  ctx.body = await bookManager.getAllBooks();
 });
 
-bookRouter.get("/books/:title", (ctx) => {
+bookRouter.get("/:title", async (ctx) => {
   const { title } = ctx.params;
   if (!title) {
     ctx.status = 400;
     ctx.body = { message: "Book title parameter is required" };
     return;
   }
-  const book = bookManager.findBook(title);
+  const book = await bookManager.findBook(title);
   if (!book) {
     ctx.status = 404;
     ctx.body = { message: `Book ${title} was not found` };
@@ -28,9 +29,9 @@ bookRouter.get("/books/:title", (ctx) => {
   ctx.body = book;
 });
 
-bookRouter.post("/books", requireAuthentication, (ctx) => {
+bookRouter.post("/", requireAuthentication, (ctx) => {
   try {
-    bookManager.addBook({ ...ctx.request.body, publisher: ctx.userEmail });
+    bookManager.addBook({ ...ctx.request.body }, ctx.userId);
     ctx.status = 201;
     ctx.body = { message: "Book added to library" };
   } catch (error) {
@@ -40,9 +41,9 @@ bookRouter.post("/books", requireAuthentication, (ctx) => {
   }
 });
 
-bookRouter.patch("/books/:title", requireAuthorization, (ctx) => {
+bookRouter.patch("/:title", requireAuthorization, (ctx) => {
   const title = ctx.bookTitle;
-  console.log(ctx.bookTitle);
+
   try {
     bookManager.updateBook(title, ctx.request.body);
     ctx.status = 200;
@@ -57,7 +58,7 @@ bookRouter.patch("/books/:title", requireAuthorization, (ctx) => {
   }
 });
 
-bookRouter.delete(`/books/:title`, requireAuthorization, (ctx) => {
+bookRouter.delete(`/:title`, requireAuthorization, (ctx) => {
   const { bookTitle } = ctx;
   try {
     bookManager.removeBookByTitle(bookTitle);
