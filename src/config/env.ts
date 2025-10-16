@@ -2,12 +2,26 @@ import { configDotenv } from "dotenv";
 
 configDotenv({ quiet: true });
 
-const JWT_KEY = process.env.JWT_KEY;
-const PORT = process.env.PORT || 3000;
+const requiredEnvVariables = [
+  "JWT_KEY",
+  "PORT",
+  "DB_HOST",
+  "DB_PORT",
+  "DB_USER",
+  "DB_PASSWORD",
+  "DB",
+] as const;
 
-if (!JWT_KEY) throw new Error("JWT key is missing in env file");
+type Env = Record<(typeof requiredEnvVariables)[number], string>;
 
-export const env = {
-  JWT_KEY,
-  PORT,
-};
+const env = {} as Env;
+
+requiredEnvVariables.forEach((variable) => {
+  const value = process.env[variable];
+  if (!value) {
+    throw new Error(`${variable} is missing in env`);
+  }
+  env[variable] = value;
+});
+
+export default env;

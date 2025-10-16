@@ -7,7 +7,8 @@ export const UserSchema = LoginSchema.extend({
     .trim()
     .min(3, "Username should be at least 3 characters long")
     .max(20, "Username cannot be longer than 20 characters"),
-  creationDate: z.date().default(() => new Date()),
 });
 
 export type UserType = z.infer<typeof UserSchema>;
+
+export type UserResponseType = UserType & { id: number; creation_date: string };

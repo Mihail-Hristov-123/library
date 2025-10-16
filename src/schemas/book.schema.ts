@@ -23,7 +23,7 @@ export const BookSchema = z.object({
     .trim()
     .min(20, "Description must be at least 20 characters")
     .max(200, "Description cannot exceed 200 characters"),
-  publisher: z.email(),
 });
 
 export type BookType = z.infer<typeof BookSchema>;
+export type BookResponseType = BookType & { publisher_id: number; id: number };

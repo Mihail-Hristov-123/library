@@ -1,78 +1,65 @@
 import z from "zod";
-import { BookSchema, type BookType } from "../schemas/book.schema.js";
+import { BookSchema } from "../schemas/book.schema.js";
+import { BookRepository } from "../repositories/book.repository.js";
+import { CustomError } from "../CustomError.js";
 
-export class BookManager {
-  private static instance: BookManager;
-
-  private books: BookType[] = [];
-
-  private constructor() {}
-
-  static getInstance() {
-    if (!BookManager.instance) {
-      BookManager.instance = new BookManager();
-    }
-    return BookManager.instance;
-  }
+class BookManager {
+  private booksRepository = new BookRepository();
 
   getAllBooks() {
-    return this.books;
+    return this.booksRepository.getAll();
   }
 
   findBook(title: string) {
-    return this.books.find((book) => book.title == title);
+    return this.booksRepository.getOneByProp("title", title);
   }
 
-  findBookIndex(title: string) {
-    return this.books.findIndex((book) => book.title == title);
+  findBooksByPublisher(userId: number) {
+    return this.booksRepository.getOneByProp("publisher_id", userId);
   }
 
-  updateBook(title: string, newInfo: unknown) {
-    const bookIndex = this.findBookIndex(title);
+  async updateBook(title: string, newInfo: unknown) {
+    const bookFound = await this.findBook(title);
 
-    if (bookIndex === -1) {
-      throw new Error(`Here- Book ${title} was not found`);
-    }
-    const book = this.books[bookIndex];
-
-    const newContent = typeof newInfo === "object" ? { ...newInfo } : {};
-
-    const result = BookSchema.safeParse({ ...book, ...newContent, title }); // avoid title update on purpose
-
-    if (!result.success) {
-      console.error(`Book validation error:`, result.error);
-      throw new Error("Book updating error");
+    if (!bookFound) {
+      throw new CustomError(
+        "NOT_FOUND",
+        `Book ${title} was not found - it cannot be updated`
+      );
     }
 
-    this.books[bookIndex] = result.data;
+    if (typeof newInfo !== "object") {
+      throw new CustomError("CLIENT", "Incorrect request body type");
+    }
 
-    console.log(`${title} was successfully updated`);
+    const result = BookSchema.safeParse({ ...bookFound, ...newInfo });
+
+    if (result.error) {
+      throw new CustomError(
+        "VALIDATION",
+        `Error occurred during book update: ${z.prettifyError(result.error)}`
+      );
+    }
+
+    await this.booksRepository.updateById(bookFound.id, result.data);
   }
 
-  addBook(newBook: unknown) {
+  async addBook(newBook: unknown, userId: number) {
     const result = BookSchema.safeParse(newBook);
 
-    if (!result.success) {
-      console.error(`Book validation error:`, result.error);
-      throw new Error(`Book addition error: ${z.prettifyError(result.error)}`);
+    if (result.error) {
+      throw new CustomError(
+        "VALIDATION",
+        `Error in book validation: ${z.prettifyError(result.error)}`
+      );
     }
 
-    const title = result.data.title;
-
-    if (this.findBook(title)) {
-      throw new Error(`Book ${title} already exists`);
-    }
-
-    this.books.push(result.data);
-    console.log(`Book ${title} successfully added to library`);
+    await this.booksRepository.insert({ ...result.data, publisher_id: userId });
   }
 
-  removeBookByTitle(bookTitle: string) {
-    const index = this.findBookIndex(bookTitle);
-    if (index === -1) {
-      throw new Error(`Book ${bookTitle} was not found`);
-    }
-    this.books.splice(index, 1);
-    console.log(`${bookTitle} was successfully removed from the library`);
+  async removeBookByTitle(bookTitle: string) {
+    await this.booksRepository.deleteBookByTitle(bookTitle);
   }
 }
+
+export const bookManager = new BookManager();

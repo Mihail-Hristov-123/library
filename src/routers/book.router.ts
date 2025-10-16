@@ -1,71 +1,45 @@
 import Router from "@koa/router";
-import { BookManager } from "../services/book.service.js";
-import { getAppropriateError } from "../utils/getAppropriateError.js";
 import { requireAuthentication } from "../middlewares/requireAuthentication.js";
 import { requireAuthorization } from "../middlewares/requireAuthorization.js";
+import { CustomError } from "../CustomError.js";
+import { handleMissingParam } from "../utils/handleMissingParam.js";
+import { bookManager } from "../services/book.service.js";
 
-export const bookRouter = new Router();
+export const bookRouter = new Router({ prefix: "/books" });
 
-const bookManager = BookManager.getInstance();
-
-bookRouter.get("/books", (ctx) => {
-  ctx.body = bookManager.getAllBooks();
+bookRouter.get("/", async (ctx) => {
+  ctx.body = await bookManager.getAllBooks();
 });
 
-bookRouter.get("/books/:title", (ctx) => {
+bookRouter.get("/:title", async (ctx) => {
   const { title } = ctx.params;
-  if (!title) {
-    ctx.status = 400;
-    ctx.body = { message: "Book title parameter is required" };
-    return;
-  }
-  const book = bookManager.findBook(title);
+
+  handleMissingParam(title);
+
+  const book = await bookManager.findBook(title!); // is non-null assertion OK here? The util above throws if title is undefined
+
   if (!book) {
-    ctx.status = 404;
-    ctx.body = { message: `Book ${title} was not found` };
-    return;
+    throw new CustomError("NOT_FOUND", `Book ${title} was not found`);
   }
   ctx.body = book;
 });
 
-bookRouter.post("/books", requireAuthentication, (ctx) => {
-  try {
-    bookManager.addBook({ ...ctx.request.body, publisher: ctx.userEmail });
-    ctx.status = 201;
-    ctx.body = { message: "Book added to library" };
-  } catch (error) {
-    console.error("Error occurred during book addition:", error);
-    ctx.status = 400;
-    ctx.body = getAppropriateError(error, "Error occurred during book posting");
-  }
+bookRouter.post("/", requireAuthentication, async (ctx) => {
+  await bookManager.addBook({ ...ctx.request.body }, ctx.userId);
+  ctx.status = 201;
+  ctx.body = { message: "Book added to library" };
 });
 
-bookRouter.patch("/books/:title", requireAuthorization, (ctx) => {
+bookRouter.patch("/:title", requireAuthorization, async (ctx) => {
   const title = ctx.bookTitle;
-  console.log(ctx.bookTitle);
-  try {
-    bookManager.updateBook(title, ctx.request.body);
-    ctx.status = 200;
-    ctx.body = { message: `${title} successfully updated` };
-  } catch (error) {
-    console.error(`An error occurred during book update:`, error);
-    ctx.status = 400;
-    ctx.body = getAppropriateError(
-      error,
-      "An error occurred during book update"
-    );
-  }
+  await bookManager.updateBook(title, ctx.request.body);
+  ctx.status = 200;
+  ctx.body = { message: `${title} successfully updated` };
 });
 
-bookRouter.delete(`/books/:title`, requireAuthorization, (ctx) => {
+bookRouter.delete(`/:title`, requireAuthorization, async (ctx) => {
   const { bookTitle } = ctx;
-  try {
-    bookManager.removeBookByTitle(bookTitle);
-    ctx.status = 200;
-    ctx.body = { message: `${bookTitle} deleted successfully` };
-  } catch (error) {
-    console.error(`An error occurred during book deletion: ${error}`);
-    ctx.status = 404;
-    ctx.body = getAppropriateError(error, "Error occurred during book removal");
-  }
+  await bookManager.removeBookByTitle(bookTitle);
+  ctx.status = 200;
+  ctx.body = { message: `${bookTitle} deleted successfully` };
 });

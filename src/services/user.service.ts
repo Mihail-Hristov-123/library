@@ -1,49 +1,59 @@
 import z from "zod";
-import { UserSchema, type UserType } from "../schemas/user.schema.js";
+import { UserSchema } from "../schemas/user.schema.js";
 import * as bcrypt from "bcrypt";
 import { LoginSchema } from "../schemas/login.schema.js";
 import { CustomError } from "../CustomError.js";
+import { UserRepository } from "../repositories/user.repository.js";
+import { getSanitizedUserInfo } from "../utils/getSanitizedUserInfo.js";
 
-export class UserManager {
-  private static instance: UserManager;
+class UserManager {
+  private userRepository = new UserRepository();
 
-  private users: UserType[] = [];
+  findUserByEmail(email: string) {
+    return this.userRepository.getOneByProp("email", email);
+  }
 
-  private constructor() {}
+  async checkEmailTaken(email: string) {
+    return Boolean(await this.findUserByEmail(email));
+  }
 
-  static getInstance() {
-    if (!UserManager.instance) {
-      UserManager.instance = new UserManager();
+  async getUserInfo(id: number) {
+    const userInfo = await this.userRepository.getFullInfo(id);
+    if (!userInfo) {
+      throw new CustomError("NOT_FOUND", "User was not found");
     }
-    return UserManager.instance;
-  }
-
-  private findUser(email: string) {
-    return this.users.find((user) => user.email === email);
-  }
-
-  checkUserExistence(email: string) {
-    return Boolean(this.findUser(email));
+    return getSanitizedUserInfo(userInfo);
   }
 
   async createUser(userInfo: unknown) {
     const { error, data } = UserSchema.safeParse(userInfo);
     if (error) {
-      throw new CustomError("VALIDATION", z.prettifyError(error));
+      throw new CustomError(
+        "VALIDATION",
+        `Error occurred during user info validation: ${z.prettifyError(error)}`
+      );
     }
 
     const { email, name, password } = data;
-    if (this.users.find((user) => user.email === email)) {
+    const emailUsed = await this.checkEmailTaken(email);
+
+    if (emailUsed) {
       throw new CustomError("CONFLICT", `Email ${email} is already used`);
     }
 
-    const hashedPass = await bcrypt.hash(password, 10);
-    this.users.push({
-      ...data,
+    let hashedPass;
+    try {
+      hashedPass = await bcrypt.hash(password, 10);
+    } catch (error) {
+      throw new CustomError("SERVER", `Password hashing error`);
+    }
+
+    const [user] = await this.userRepository.insert({
+      email,
+      name,
       password: hashedPass,
     });
-
-    return { name, email };
+    return user;
   }
 
   async checkCredentials(loginData: unknown) {
@@ -54,13 +64,19 @@ export class UserManager {
     }
     const { email, password } = data;
 
-    const account = this.findUser(email);
+    const account = await this.findUserByEmail(email);
 
     if (!account) {
       throw new CustomError("AUTHENTICATION", `Account not found`);
     }
 
-    const passwordCorrect = await bcrypt.compare(password, account.password);
-    return passwordCorrect;
+    try {
+      const passwordCorrect = await bcrypt.compare(password, account.password);
+      return passwordCorrect;
+    } catch (error) {
+      throw new CustomError("SERVER", `Password verification error`);
+    }
   }
 }
+
+export const userManager = new UserManager();
