@@ -7,6 +7,7 @@ import { setAccessTokenCookie } from "../utils/setAccessTokenCookie.js";
 import { requireAuthentication } from "../middlewares/requireAuthentication.js";
 
 import { UserBooksManager } from "../services/userBooks.service.js";
+import { handleMissingParam } from "../utils/handleMissingParam.js";
 
 export const userRouter = new Router({ prefix: "/users" });
 
@@ -14,8 +15,9 @@ const userManager = UserManager.getInstance();
 const userBooksManager = UserBooksManager.getInstance();
 
 userRouter.get("/:id", async (ctx) => {
-  const userId = Number(ctx.params.id);
-  const userDashboard = await userBooksManager.getUserDashboard(userId);
+  const userId = ctx.params.id;
+  handleMissingParam(userId);
+  const userDashboard = await userBooksManager.getUserDashboard(Number(userId));
   ctx.body = userDashboard;
 });
 

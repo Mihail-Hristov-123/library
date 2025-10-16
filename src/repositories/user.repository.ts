@@ -1,21 +1,16 @@
 import db from "../config/knex.js";
-import {
-  type UserResponseType,
-  type UserType,
-} from "../schemas/user.schema.js";
+import { type UserResponseType } from "../schemas/user.schema.js";
+import { BaseRepository } from "./base.repository.js";
 
-export class UserRepository {
-  create(userInfo: UserType) {
-    return db<UserResponseType>("users")
-      .insert(userInfo)
-      .returning(["email", "name"]);
-  }
+export class UserRepository extends BaseRepository<UserResponseType> {
+  protected tableName = "users" as const;
 
-  findUser(userId: number) {
-    return db<UserResponseType>("users").select().where({ id: userId }).first();
-  }
-
-  findUserByEmail(email: string) {
-    return db<UserResponseType>("users").select().where({ email }).first();
+  getFullInfo(userId: number) {
+    return db(this.tableName)
+      .select("users.*", db.raw("json_agg(books.*) as publications"))
+      .leftJoin("books", "books.publisher_id", "users.id")
+      .where("users.id", userId)
+      .groupBy("users.id")
+      .first();
   }
 }

@@ -18,13 +18,6 @@ export class UserBooksManager {
   }
 
   async getUserDashboard(userId: number) {
-    if (!userId) {
-      throw new CustomError(
-        "CLIENT",
-        "A valid user ID should be included in the request parameters"
-      );
-    }
-
     const [user, books] = await Promise.all([
       this.userManager.findUser(userId),
       this.bookManager.findBooksByPublisher(userId),
@@ -43,7 +36,7 @@ export class UserBooksManager {
         email: user.email,
         activeSince: new Date(user.creation_date).toDateString(),
       },
-      publications: books.length ? books : "None so far",
+      publications: books ?? "None so far",
     };
   }
 }

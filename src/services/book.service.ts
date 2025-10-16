@@ -18,15 +18,15 @@ export class BookManager {
   }
 
   getAllBooks() {
-    return this.booksRepository.getAllBooks();
+    return this.booksRepository.getAll();
   }
 
   findBook(title: string) {
-    return this.booksRepository.findBookByTitle(title);
+    return this.booksRepository.getOneByProp("title", title);
   }
 
   findBooksByPublisher(userId: number) {
-    return this.booksRepository.findBooksByPublisher(userId);
+    return this.booksRepository.getOneByProp("publisher_id", userId);
   }
 
   async updateBook(title: string, newInfo: unknown) {
@@ -52,7 +52,7 @@ export class BookManager {
       );
     }
 
-    await this.booksRepository.updateBook(title, result.data);
+    await this.booksRepository.updateById(bookFound.id, result.data);
   }
 
   async addBook(newBook: unknown, userId: number) {
@@ -65,10 +65,10 @@ export class BookManager {
       );
     }
 
-    await this.booksRepository.createBook(result.data, userId);
+    await this.booksRepository.insert({ ...result.data, publisher_id: userId });
   }
 
   async removeBookByTitle(bookTitle: string) {
-    await this.booksRepository.removeBook(bookTitle);
+    await this.booksRepository.deleteBookByTitle(bookTitle);
   }
 }

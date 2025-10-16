@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ quiet: true });
 import type { Knex } from "knex";
 
 const config: { [key: string]: Knex.Config } = {

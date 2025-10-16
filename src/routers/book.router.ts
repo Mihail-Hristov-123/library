@@ -3,7 +3,7 @@ import { BookManager } from "../services/book.service.js";
 import { requireAuthentication } from "../middlewares/requireAuthentication.js";
 import { requireAuthorization } from "../middlewares/requireAuthorization.js";
 import { CustomError } from "../CustomError.js";
-import { handleMissingTitleParam } from "../utils/handleMissingTitleParam.js";
+import { handleMissingParam } from "../utils/handleMissingParam.js";
 
 export const bookRouter = new Router({ prefix: "/books" });
 
@@ -16,7 +16,7 @@ bookRouter.get("/", async (ctx) => {
 bookRouter.get("/:title", async (ctx) => {
   const { title } = ctx.params;
 
-  handleMissingTitleParam(title);
+  handleMissingParam(title);
 
   const book = await bookManager.findBook(title!); // is non-null assertion OK here? The util above throws if title is undefined
 

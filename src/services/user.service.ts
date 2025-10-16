@@ -20,15 +20,15 @@ export class UserManager {
   }
 
   findUser(id: number) {
-    return this.userRepository.findUser(id);
+    return this.userRepository.getOneById(id);
   }
 
   findUserByEmail(email: string) {
-    return this.userRepository.findUserByEmail(email);
+    return this.userRepository.getOneByProp("email", email);
   }
 
   async checkEmailTaken(email: string) {
-    return Boolean(await this.userRepository.findUserByEmail(email));
+    return Boolean(await this.findUserByEmail(email));
   }
 
   async createUser(userInfo: unknown) {
@@ -54,7 +54,7 @@ export class UserManager {
       throw new CustomError("SERVER", `Password hashing error`);
     }
 
-    const [user] = await this.userRepository.create({
+    const [user] = await this.userRepository.insert({
       email,
       name,
       password: hashedPass,

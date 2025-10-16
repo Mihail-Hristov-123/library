@@ -26,4 +26,4 @@ export const BookSchema = z.object({
 });
 
 export type BookType = z.infer<typeof BookSchema>;
-export type BookResponseType = BookType & { publisher_id: number };
+export type BookResponseType = BookType & { publisher_id: number; id: number };
