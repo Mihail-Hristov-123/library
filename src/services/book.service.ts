@@ -1,21 +1,10 @@
 import z from "zod";
-import { BookSchema, type BookType } from "../schemas/book.schema.js";
+import { BookSchema } from "../schemas/book.schema.js";
 import { BookRepository } from "../repositories/book.repository.js";
 import { CustomError } from "../CustomError.js";
 
-export class BookManager {
-  private static instance: BookManager;
-
+class BookManager {
   private booksRepository = new BookRepository();
-
-  private constructor() {}
-
-  static getInstance() {
-    if (!BookManager.instance) {
-      BookManager.instance = new BookManager();
-    }
-    return BookManager.instance;
-  }
 
   getAllBooks() {
     return this.booksRepository.getAll();
@@ -72,3 +61,5 @@ export class BookManager {
     await this.booksRepository.deleteBookByTitle(bookTitle);
   }
 }
+
+export const bookManager = new BookManager();

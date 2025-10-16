@@ -1,23 +1,24 @@
 import Router from "@koa/router";
-import { UserManager } from "../services/user.service.js";
+
 import { signJWT } from "../utils/signJWT.js";
 
 import { CustomError } from "../CustomError.js";
 import { setAccessTokenCookie } from "../utils/setAccessTokenCookie.js";
 import { requireAuthentication } from "../middlewares/requireAuthentication.js";
 
-import { UserBooksManager } from "../services/userBooks.service.js";
 import { handleMissingParam } from "../utils/handleMissingParam.js";
+import { userManager } from "../services/user.service.js";
 
 export const userRouter = new Router({ prefix: "/users" });
-
-const userManager = UserManager.getInstance();
-const userBooksManager = UserBooksManager.getInstance();
 
 userRouter.get("/:id", async (ctx) => {
   const userId = ctx.params.id;
   handleMissingParam(userId);
-  const userDashboard = await userBooksManager.getUserDashboard(Number(userId));
+  if (isNaN(Number(userId))) {
+    throw new CustomError("CLIENT", "User ID parameter should be an integer");
+  }
+
+  const userDashboard = await userManager.getUserInfo(Number(userId));
   ctx.body = userDashboard;
 });
 

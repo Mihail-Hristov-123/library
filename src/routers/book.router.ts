@@ -1,13 +1,11 @@
 import Router from "@koa/router";
-import { BookManager } from "../services/book.service.js";
 import { requireAuthentication } from "../middlewares/requireAuthentication.js";
 import { requireAuthorization } from "../middlewares/requireAuthorization.js";
 import { CustomError } from "../CustomError.js";
 import { handleMissingParam } from "../utils/handleMissingParam.js";
+import { bookManager } from "../services/book.service.js";
 
 export const bookRouter = new Router({ prefix: "/books" });
-
-const bookManager = BookManager.getInstance();
 
 bookRouter.get("/", async (ctx) => {
   ctx.body = await bookManager.getAllBooks();

@@ -4,24 +4,10 @@ import * as bcrypt from "bcrypt";
 import { LoginSchema } from "../schemas/login.schema.js";
 import { CustomError } from "../CustomError.js";
 import { UserRepository } from "../repositories/user.repository.js";
+import { getSanitizedUserInfo } from "../utils/getSanitizedUserInfo.js";
 
-export class UserManager {
-  private static instance: UserManager;
-
+class UserManager {
   private userRepository = new UserRepository();
-
-  private constructor() {}
-
-  static getInstance() {
-    if (!UserManager.instance) {
-      UserManager.instance = new UserManager();
-    }
-    return UserManager.instance;
-  }
-
-  findUser(id: number) {
-    return this.userRepository.getOneById(id);
-  }
 
   findUserByEmail(email: string) {
     return this.userRepository.getOneByProp("email", email);
@@ -29,6 +15,14 @@ export class UserManager {
 
   async checkEmailTaken(email: string) {
     return Boolean(await this.findUserByEmail(email));
+  }
+
+  async getUserInfo(id: number) {
+    const userInfo = await this.userRepository.getFullInfo(id);
+    if (!userInfo) {
+      throw new CustomError("NOT_FOUND", "User was not found");
+    }
+    return getSanitizedUserInfo(userInfo);
   }
 
   async createUser(userInfo: unknown) {
@@ -84,3 +78,5 @@ export class UserManager {
     }
   }
 }
+
+export const userManager = new UserManager();

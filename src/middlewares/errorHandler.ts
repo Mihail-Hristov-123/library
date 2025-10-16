@@ -20,7 +20,7 @@ export const errorHandler: Middleware = async (ctx, next) => {
 
     ctx.status = 500;
     ctx.body = {
-      message: "Unknown Server Error",
+      error: "Unknown Server Error",
     };
   }
 };

@@ -1,11 +1,9 @@
 import type { Context, Middleware } from "koa";
 
-import { BookManager } from "../services/book.service.js";
 import { requireAuthentication } from "./requireAuthentication.js";
 import { CustomError } from "../CustomError.js";
 import { handleMissingParam } from "../utils/handleMissingParam.js";
-
-const bookManager = BookManager.getInstance();
+import { bookManager } from "../services/book.service.js";
 
 export const requireAuthorization: Middleware = async (ctx: Context, next) => {
   if (!ctx.userEmail) {
