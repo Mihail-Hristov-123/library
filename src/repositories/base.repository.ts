@@ -1,14 +1,21 @@
-import db from "../config/knex.js";
+import knex from "knex";
+import devConfig from "../../knexfile.js";
 
 export abstract class BaseRepository<T> {
   protected abstract tableName: "users" | "books";
 
+  protected static db = knex(devConfig);
+
+  protected get db() {
+    return BaseRepository.db;
+  }
+
   getAll() {
-    return db<T[]>(this.tableName).select();
+    return this.db<T[]>(this.tableName).select();
   }
 
   getOneById(id: number) {
-    return db(this.tableName).select().where({ id }).first();
+    return this.db(this.tableName).select().where({ id }).first();
   }
 
   getOneByProp<K extends keyof T>(prop: K, value: T[K]) {
@@ -18,21 +25,21 @@ export abstract class BaseRepository<T> {
       );
       return;
     }
-    return db(this.tableName)
+    return this.db(this.tableName)
       .select()
       .where({ [prop]: value })
       .first();
   }
 
   deleteById(id: number) {
-    return db(this.tableName).delete().where({ id });
+    return this.db(this.tableName).delete().where({ id });
   }
 
   insert(data: Partial<T>) {
-    return db(this.tableName).insert(data).returning("*");
+    return this.db(this.tableName).insert(data).returning("*");
   }
 
   updateById(id: number, data: Partial<T>) {
-    return db(this.tableName).update(data).where({ id });
+    return this.db(this.tableName).update(data).where({ id });
   }
 }
