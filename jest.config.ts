@@ -13,7 +13,6 @@ const config: Config = {
       },
     ],
   },
-  // collectCoverage: true,
   collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.d.ts"],
   coverageThreshold: {
     global: {
