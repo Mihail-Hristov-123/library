@@ -1,10 +1,10 @@
 import type { Config } from "jest";
 
 const config: Config = {
+  extensionsToTreatAsEsm: [".ts"],
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
-  extensionsToTreatAsEsm: [".ts"],
   transform: {
     "^.+\\.(mt|t|cj|j)s$": [
       "ts-jest",
@@ -12,6 +12,16 @@ const config: Config = {
         useESM: true,
       },
     ],
+  },
+  // collectCoverage: true,
+  collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.d.ts"],
+  coverageThreshold: {
+    global: {
+      branches: 90,
+      functions: 90,
+      lines: 90,
+      statements: 90,
+    },
   },
 };
 
