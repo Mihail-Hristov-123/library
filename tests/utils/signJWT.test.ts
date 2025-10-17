@@ -14,8 +14,12 @@ const { CustomError } = await import("../../src/CustomError.js");
 describe("signJWT (ESM test)", () => {
   const email = "test@example.com";
 
-  afterEach(() => {
+  beforeEach(() => {
     mockSign.mockReset();
+  });
+
+  afterAll(() => {
+    jest.resetModules();
   });
 
   it("should return a token when jwt.sign succeeds", () => {
@@ -28,7 +32,7 @@ describe("signJWT (ESM test)", () => {
 
   it("should throw a CustomError when jwt.sign throws", () => {
     mockSign.mockImplementationOnce(() => {
-      throw new Error("signing failed");
+      throw new Error("Token signing failed");
     });
 
     expect(() => signJWT(email)).toThrow(CustomError);
