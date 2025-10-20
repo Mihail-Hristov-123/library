@@ -8,6 +8,7 @@ import { mockBcryptCompare, mockBcryptHash } from "../../mocks/bcrypt.mock.js";
 import type { LoginType } from "@/schemas/login.schema.js";
 import { mockGetSanitizedUserInfo } from "../../mocks/getSanitizedUserInfo.mock.js";
 import {
+  mockGetAll,
   mockGetFullInfo,
   mockGetOneByProp,
   mockInsert,
@@ -32,9 +33,24 @@ describe("UserManager", () => {
   });
 
   describe("findUserByEmail", () => {
-    it("should call the user repository's getOneByProp method with the provided email", async () => {
-      await userManager.findUserByEmail(email);
+    it("should call the user repository's getOneByProp method with the provided email and return the result", async () => {
+      mockGetOneByProp.mockReturnValueOnce({
+        name: "Josh",
+        email: "randomemail@gmail.com",
+      });
+      const result = await userManager.findUserByEmail(email);
       expect(mockGetOneByProp).toHaveBeenCalledWith("email", email);
+      expect(result).toEqual({ name: "Josh", email: "randomemail@gmail.com" });
+    });
+  });
+
+  describe("getAllUsers", () => {
+    it("should call the user repository's getAll method and return the result", async () => {
+      const mockResult = [{ name: "userOne" }, { name: "userTwo" }];
+      mockGetAll.mockReturnValueOnce(mockResult);
+      const result = await userManager.getAllUsers();
+      expect(mockGetAll).toHaveBeenCalled();
+      expect(result).toEqual(mockResult);
     });
   });
 
