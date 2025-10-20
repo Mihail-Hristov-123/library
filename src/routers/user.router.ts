@@ -11,6 +11,10 @@ import { userManager } from "../services/user.service.js";
 
 export const userRouter = new Router({ prefix: "/users" });
 
+userRouter.get("/", async (ctx) => {
+  ctx.body = await userManager.getAllUsers();
+});
+
 userRouter.get("/:id", async (ctx) => {
   const userId = ctx.params.id;
   handleMissingParam(userId);

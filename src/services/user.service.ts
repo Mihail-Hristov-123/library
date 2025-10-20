@@ -13,6 +13,10 @@ export class UserManager {
     return this.userRepository.getOneByProp("email", email);
   }
 
+  getAllUsers() {
+    return this.userRepository.getAll();
+  }
+
   async checkEmailTaken(email: string) {
     return Boolean(await this.findUserByEmail(email));
   }

@@ -31,3 +31,50 @@ seed
 build
 start
 For testing - test:coverage
+
+# API Endpoints
+
+## Users (`/users`)
+
+- **GET /**  
+  Get all users. No auth required.
+
+- **GET /:id**  
+  Get user by ID (integer). No auth. Errors if missing/invalid ID.
+
+- **POST /register**  
+  Register new user. Body: user data. Returns JWT cookie. No auth.
+
+- **POST /login**  
+  Login user. Body: credentials. Returns JWT cookie. No auth.
+
+- **POST /logout**  
+  Logout user. Clears JWT cookie. Requires auth.
+
+---
+
+## Books (`/books`)
+
+- **GET /**  
+  Get all books. No auth.
+
+- **GET /:title**  
+  Get book by title (string). No auth. Errors if missing/not found.
+
+- **POST /**  
+  Add new book. Body: book data. Requires authentication.
+
+- **PATCH /:title**  
+  Update book by title. Body: updates. Requires authorization.
+
+- **DELETE /:title**  
+  Delete book by title. Requires authorization.
+
+---
+
+## Notes
+
+- Auth uses JWT tokens in HTTP-only cookies.
+- `requireAuthentication` middleware protects routes needing login.
+- `requireAuthorization` checks user permissions for modifications.
+- Errors thrown for missing params, invalid input, or unauthorized access.
