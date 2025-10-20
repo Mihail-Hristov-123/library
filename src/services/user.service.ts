@@ -6,7 +6,7 @@ import { CustomError } from "../CustomError.js";
 import { UserRepository } from "../repositories/user.repository.js";
 import { getSanitizedUserInfo } from "../utils/getSanitizedUserInfo.js";
 
-class UserManager {
+export class UserManager {
   private userRepository = new UserRepository();
 
   findUserByEmail(email: string) {
