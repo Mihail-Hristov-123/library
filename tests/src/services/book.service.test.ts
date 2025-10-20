@@ -1,13 +1,13 @@
 import { jest } from "@jest/globals";
 import type { BookType } from "@/schemas/book.schema.js";
 import { CustomError } from "@/CustomError.js";
+import { mockDeleteBookByTitle } from "../../mocks/book.repository.mock.js";
 import {
-  mockDeleteBookByTitle,
   mockGetAll,
   mockGetOneByProp,
   mockInsert,
   mockUpdateById,
-} from "../../mocks/book.repository.mock.js";
+} from "../../mocks/base.repository.mock.js";
 
 const { bookManager } = await import("@/services/book.service.js");
 

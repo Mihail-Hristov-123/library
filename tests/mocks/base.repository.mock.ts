@@ -5,13 +5,17 @@ export const mockGetOneByProp = jest.fn();
 export const mockInsert = jest.fn();
 export const mockUpdateById = jest.fn();
 
+export const baseRepositoryMockMethods = {
+  getAll: mockGetAll,
+  getOneByProp: mockGetOneByProp,
+  insert: mockInsert,
+  updateById: mockUpdateById,
+};
+
 jest.unstable_mockModule("@/repositories/base.repository.js", () => {
   return {
-    BaseRepository: jest.fn().mockImplementation(() => ({
-      getAll: mockGetAll,
-      getOneByProp: mockGetOneByProp,
-      insert: mockInsert,
-      updateById: mockUpdateById,
-    })),
+    BaseRepository: jest
+      .fn()
+      .mockImplementation(() => baseRepositoryMockMethods),
   };
 });

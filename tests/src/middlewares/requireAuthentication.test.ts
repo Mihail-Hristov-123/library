@@ -1,10 +1,11 @@
 import { jest } from "@jest/globals";
-import { mockGetOneByProp } from "../../mocks/user.repository.mock.js";
+
 import type { Context, Next } from "koa";
 import type { UserResponseType } from "@/schemas/user.schema.js";
 import { CustomError } from "@/CustomError.js";
 import { mockJwtVerify } from "../../mocks/jsonwebtoken.mock.js";
 import { mockIsExpectedJWTPayload } from "../../mocks/isExpectedJWTPayload.mock.js";
+import { mockGetOneByProp } from "../../mocks/base.repository.mock.js";
 
 const { requireAuthentication } = await import(
   "@/middlewares/requireAuthentication.js"

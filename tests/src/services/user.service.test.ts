@@ -9,10 +9,10 @@ import type { LoginType } from "@/schemas/login.schema.js";
 import { mockGetSanitizedUserInfo } from "../../mocks/getSanitizedUserInfo.mock.js";
 import {
   mockGetAll,
-  mockGetFullInfo,
   mockGetOneByProp,
   mockInsert,
-} from "../../mocks/user.repository.mock.js";
+} from "../../mocks/base.repository.mock.js";
+import { mockGetFullInfo } from "../../mocks/user.repository.mock.js";
 
 const { userManager } = await import("@/services/user.service.js");
 
