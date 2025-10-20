@@ -3,16 +3,8 @@ import { mockGetOneByProp } from "../../mocks/user.repository.mock.js";
 import type { Context, Next } from "koa";
 import type { UserResponseType } from "@/schemas/user.schema.js";
 import { CustomError } from "@/CustomError.js";
-
-const mockIsExpectedJWTPayload = jest.fn();
-const mockJwtVerify = jest.fn();
-
-jest.unstable_mockModule("@/typeGuards/isExpectedJWTPayload.js", () => ({
-  default: mockIsExpectedJWTPayload,
-}));
-jest.unstable_mockModule("jsonwebtoken", () => ({
-  default: { verify: mockJwtVerify },
-}));
+import { mockJwtVerify } from "../../mocks/jsonwebtoken.mock.js";
+import { mockIsExpectedJWTPayload } from "../../mocks/isExpectedJWTPayload.mock.js";
 
 const { requireAuthentication } = await import(
   "@/middlewares/requireAuthentication.js"
