@@ -7,13 +7,14 @@ const config: Config = {
     "^@/(.*)\\.js$": "<rootDir>/src/$1.ts",
   },
   transform: {
-    "^.+\\.(mt|t|cj|j)s$": [
+    "^.+\\.ts$": [
       "ts-jest",
       {
         useESM: true,
       },
     ],
   },
+  testPathIgnorePatterns: ["/dist/"],
   collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.d.ts"],
   coverageThreshold: {
     global: {
