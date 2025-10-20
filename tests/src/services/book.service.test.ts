@@ -7,7 +7,7 @@ import {
   mockGetOneByProp,
   mockInsert,
   mockUpdateById,
-} from "../../mocks/bookRepoMock.js";
+} from "../../mocks/book.repository.mock.js";
 
 const { bookManager } = await import("@/services/book.service.js");
 
