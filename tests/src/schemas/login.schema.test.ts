@@ -1,4 +1,7 @@
-import { LoginSchema, type LoginType } from "../../src/schemas/login.schema.js";
+import {
+  LoginSchema,
+  type LoginType,
+} from "../../../src/schemas/login.schema.js";
 
 const validLoginCredentials: LoginType = {
   email: "realEmail@gmail.com",

@@ -1,26 +1,15 @@
 import { jest } from "@jest/globals";
-import type { BookType } from "../../src/schemas/book.schema.js";
-import { CustomError } from "../../src/CustomError.js";
+import type { BookType } from "../../../src/schemas/book.schema.js";
+import { CustomError } from "../../../src/CustomError.js";
+import {
+  mockDeleteBookByTitle,
+  mockGetAll,
+  mockGetOneByProp,
+  mockInsert,
+  mockUpdateById,
+} from "../../mocks/bookRepoMock.js";
 
-const mockDeleteBookByTitle = jest.fn();
-const mockGetAll = jest.fn();
-const mockGetOneByProp = jest.fn();
-const mockInsert = jest.fn();
-const mockUpdateById = jest.fn();
-
-jest.unstable_mockModule("../../src/repositories/book.repository.js", () => {
-  return {
-    BookRepository: jest.fn().mockImplementation(() => ({
-      getAll: mockGetAll,
-      deleteBookByTitle: mockDeleteBookByTitle,
-      getOneByProp: mockGetOneByProp,
-      insert: mockInsert,
-      updateById: mockUpdateById,
-    })),
-  };
-});
-
-const { bookManager } = await import("../../src/services/book.service.js");
+const { bookManager } = await import("../../../src/services/book.service.js");
 
 const validBook: BookType = {
   author: "Unknown",

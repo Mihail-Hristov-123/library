@@ -1,5 +1,5 @@
-import { CustomError } from "../../src/CustomError.js";
-import { handleMissingParam } from "../../src/utils/handleMissingParam.js";
+import { CustomError } from "../../../src/CustomError.js";
+import { handleMissingParam } from "../../../src/utils/handleMissingParam.js";
 
 describe("handleMissingParam", () => {
   it("should throw when param is undefined", () => {

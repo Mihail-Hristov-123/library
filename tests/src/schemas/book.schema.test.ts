@@ -1,4 +1,4 @@
-import { BookSchema, type BookType } from "../../src/schemas/book.schema.js";
+import { BookSchema, type BookType } from "../../../src/schemas/book.schema.js";
 
 const validBook: BookType = {
   title: "1984",

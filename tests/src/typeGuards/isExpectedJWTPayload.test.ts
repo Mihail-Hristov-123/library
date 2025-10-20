@@ -1,4 +1,4 @@
-import isExpectedJWTPayload from "../../src/typeGuards/isExpectedJWTPayload.js";
+import isExpectedJWTPayload from "../../../src/typeGuards/isExpectedJWTPayload.js";
 
 const validPayload = {
   email: "realEmail@gmail.com",
