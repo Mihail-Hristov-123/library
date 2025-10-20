@@ -1,5 +1,5 @@
-import type { UserResponseType } from "../../../src/schemas/user.schema.js";
-import { getSanitizedUserInfo } from "../../../src/utils/getSanitizedUserInfo.js";
+import type { UserResponseType } from "@/schemas/user.schema.js";
+import { getSanitizedUserInfo } from "@/utils/getSanitizedUserInfo.js";
 
 let mockUserInfo: UserResponseType;
 let result: ReturnType<typeof getSanitizedUserInfo>;

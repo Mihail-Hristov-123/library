@@ -4,6 +4,7 @@ const config: Config = {
   extensionsToTreatAsEsm: [".ts"],
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",
+    "^@/(.*)\\.js$": "<rootDir>/src/$1.ts",
   },
   transform: {
     "^.+\\.(mt|t|cj|j)s$": [

@@ -8,8 +8,8 @@ jest.unstable_mockModule("jsonwebtoken", () => ({
   },
 }));
 
-const { signJWT } = await import("../../../src/utils/signJWT.js");
-const { CustomError } = await import("../../../src/CustomError.js");
+const { signJWT } = await import("@/utils/signJWT.js");
+const { CustomError } = await import("@/CustomError.js");
 
 describe("signJWT (ESM test)", () => {
   const email = "test@example.com";

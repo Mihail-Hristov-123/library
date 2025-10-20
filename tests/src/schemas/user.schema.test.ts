@@ -1,4 +1,4 @@
-import { UserSchema, type UserType } from "../../../src/schemas/user.schema.js";
+import { UserSchema, type UserType } from "@/schemas/user.schema.js";
 
 const validUser: UserType = {
   email: "realEmail@gmail.com",

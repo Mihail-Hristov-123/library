@@ -1,6 +1,6 @@
 import { jest } from "@jest/globals";
-import type { BookType } from "../../../src/schemas/book.schema.js";
-import { CustomError } from "../../../src/CustomError.js";
+import type { BookType } from "@/schemas/book.schema.js";
+import { CustomError } from "@/CustomError.js";
 import {
   mockDeleteBookByTitle,
   mockGetAll,
@@ -9,7 +9,7 @@ import {
   mockUpdateById,
 } from "../../mocks/bookRepoMock.js";
 
-const { bookManager } = await import("../../../src/services/book.service.js");
+const { bookManager } = await import("@/services/book.service.js");
 
 const validBook: BookType = {
   author: "Unknown",

@@ -5,7 +5,7 @@ export const mockGetOneByProp = jest.fn();
 export const mockInsert = jest.fn();
 export const mockUpdateById = jest.fn();
 
-jest.unstable_mockModule("../../src/repositories/book.repository.js", () => {
+jest.unstable_mockModule("@/repositories/book.repository.js", () => {
   return {
     BookRepository: jest.fn().mockImplementation(() => ({
       getAll: mockGetAll,

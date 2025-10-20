@@ -9,7 +9,11 @@
     "strict": true,
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"]
+    }
   },
   "include": ["**/*.ts"]
 }
