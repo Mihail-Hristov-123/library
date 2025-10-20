@@ -4,7 +4,8 @@ import { CustomError } from "@/CustomError.js";
 
 import type { UserResponseType } from "@/schemas/user.schema.js";
 import { mockZodError, mockZodParse } from "../../mocks/zodMocks.js";
-import { mockBcryptHash } from "../../mocks/bcryptMock.js";
+import { mockBcryptCompare, mockBcryptHash } from "../../mocks/bcryptMock.js";
+import type { LoginType } from "@/schemas/login.schema.js";
 
 export const mockGetOneByProp = jest.fn();
 export const mockGetFullInfo = jest.fn();
@@ -29,7 +30,7 @@ const { userManager } = await import("@/services/user.service.js");
 const { getSanitizedUserInfo } = await import(
   "@/utils/getSanitizedUserInfo.js"
 );
-const bcrypt = await import("bcrypt");
+
 const email = "randomEmail@gmail.com";
 const userId = 1;
 const fullUserInfo: UserResponseType = {
@@ -100,7 +101,7 @@ describe("UserManager", () => {
   });
 
   describe("createUser", () => {
-    it("should call the user repository's insert method with the provided user info and the hashed password if no errors are thrown, and return the user", async () => {
+    it("should call the user repository's insert method with the provided user info and the hashed password if no errors are thrown and finally return the user", async () => {
       mockGetOneByProp.mockImplementationOnce(() => false);
       mockZodParse.mockImplementationOnce(() => ({
         data: fullUserInfo,
@@ -163,6 +164,69 @@ describe("UserManager", () => {
       await expect(userManager.createUser(fullUserInfo)).rejects.toThrow(
         CustomError
       );
+    });
+  });
+  describe("checkCredentials", () => {
+    const validLoginCredentials: LoginType = {
+      email: "realmeial@gmail.com",
+      password: "1234432123",
+    };
+
+    it("should return true when email exists and the password matches", async () => {
+      mockZodParse.mockImplementationOnce(() => ({
+        success: true,
+        data: validLoginCredentials,
+      }));
+
+      mockGetOneByProp.mockReturnValueOnce(fullUserInfo);
+      mockBcryptCompare.mockReturnValueOnce(true);
+
+      const result = await userManager.checkCredentials(validLoginCredentials);
+      expect(result).toBe(true);
+    });
+
+    it("should return false when email exists but the password does not match", async () => {
+      mockZodParse.mockImplementationOnce(() => ({
+        success: true,
+        data: validLoginCredentials,
+      }));
+
+      mockGetOneByProp.mockReturnValueOnce(fullUserInfo);
+      mockBcryptCompare.mockReturnValueOnce(false);
+
+      const result = await userManager.checkCredentials(validLoginCredentials);
+      expect(result).toBe(false);
+    });
+
+    it("should throw a CustomError if zod validation of the login credentials is unsuccessful", async () => {
+      mockZodParse.mockImplementationOnce(() => ({
+        success: false,
+        error: mockZodError,
+      }));
+
+      await expect(() =>
+        userManager.checkCredentials(validLoginCredentials)
+      ).rejects.toThrow(CustomError);
+    });
+
+    it("should throw a CustomError if an account with the provided email is not found", async () => {
+      mockZodParse.mockImplementationOnce(() => validLoginCredentials);
+      mockGetOneByProp.mockReturnValueOnce(false);
+
+      await expect(() =>
+        userManager.checkCredentials(validLoginCredentials)
+      ).rejects.toThrow(CustomError);
+    });
+
+    it("should throw a CustomError if bcrypt compare throws an error", async () => {
+      mockZodParse.mockImplementationOnce(() => validLoginCredentials);
+      mockGetOneByProp.mockReturnValueOnce(fullUserInfo);
+      mockBcryptCompare.mockImplementationOnce(() => {
+        throw new Error("Password comparison error");
+      });
+      await expect(() =>
+        userManager.checkCredentials(validLoginCredentials)
+      ).rejects.toThrow(CustomError);
     });
   });
 });

@@ -27,4 +27,7 @@ jest.unstable_mockModule("@/schemas/user.schema.js", () => ({
   BookSchema: {
     safeParse: mockZodParse,
   },
+  LoginSchema: {
+    safeParse: mockZodParse,
+  },
 }));
