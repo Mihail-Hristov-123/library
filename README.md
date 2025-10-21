@@ -1,3 +1,7 @@
+# Notice
+
+I worked on the **improve-testing** branch a day after the deadline for task - if you feel like that's OK, please check it out - it is not merged. There, the jest setup is cleared up, as well as the tsconfig. As result, this allowed me to entirely get rid of the unstable mock module jest method and to avoid creating the clumsy mock folder. If we don't count tests, the app is otherwise untouched.
+
 ## Project Description
 
 This project's main idea was an online reading forum where users can share their favorite reading materials. Each reading material has exactly one publisher (user), so I figured a many-to-many relationship was not needed. Just foreign keys are used to link books to their publishers.
