@@ -1,9 +1,9 @@
 import Koa from "koa";
-import env from "./config/env.js";
-import { bookRouter } from "./routers/book.router.js";
-import { userRouter } from "./routers/user.router.js";
+import env from "./config/env";
+import { bookRouter } from "./routers/book.router";
+import { userRouter } from "./routers/user.router";
 import { bodyParser } from "@koa/bodyparser";
-import { errorHandler } from "./middlewares/errorHandler.js";
+import { errorHandler } from "./middlewares/errorHandler";
 
 const app = new Koa();
 
