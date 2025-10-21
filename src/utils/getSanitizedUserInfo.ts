@@ -1,4 +1,4 @@
-import type { UserResponseType } from "../schemas/user.schema.js";
+import type { UserResponseType } from "../schemas/user.schema";
 
 export const getSanitizedUserInfo = (
   info: UserResponseType

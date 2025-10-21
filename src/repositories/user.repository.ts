@@ -1,5 +1,5 @@
-import { type UserResponseType } from "../schemas/user.schema.js";
-import { BaseRepository } from "./base.repository.js";
+import { type UserResponseType } from "../schemas/user.schema";
+import { BaseRepository } from "./base.repository";
 
 export class UserRepository extends BaseRepository<UserResponseType> {
   protected tableName = "users" as const;

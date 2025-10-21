@@ -1,10 +1,10 @@
 import type { Context, Middleware } from "koa";
 import jwt from "jsonwebtoken";
 
-import env from "../config/env.js";
-import isExpectedJWTPayload from "../typeGuards/isExpectedJWTPayload.js";
-import { CustomError } from "../CustomError.js";
-import { userManager } from "../services/user.service.js";
+import env from "../config/env";
+import isExpectedJWTPayload from "../typeGuards/isExpectedJWTPayload";
+import { CustomError } from "../CustomError";
+import { userManager } from "../services/user.service";
 
 export const requireAuthentication: Middleware = async (ctx: Context, next) => {
   const token = ctx.cookies.get("accessToken");

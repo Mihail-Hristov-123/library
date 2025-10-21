@@ -1,13 +1,13 @@
 import Router from "@koa/router";
 
-import { signJWT } from "../utils/signJWT.js";
+import { signJWT } from "../utils/signJWT";
 
-import { CustomError } from "../CustomError.js";
-import { setAccessTokenCookie } from "../utils/setAccessTokenCookie.js";
-import { requireAuthentication } from "../middlewares/requireAuthentication.js";
+import { CustomError } from "../CustomError";
+import { setAccessTokenCookie } from "../utils/setAccessTokenCookie";
+import { requireAuthentication } from "../middlewares/requireAuthentication";
 
-import { handleMissingParam } from "../utils/handleMissingParam.js";
-import { userManager } from "../services/user.service.js";
+import { handleMissingParam } from "../utils/handleMissingParam";
+import { userManager } from "../services/user.service";
 
 export const userRouter = new Router({ prefix: "/users" });
 

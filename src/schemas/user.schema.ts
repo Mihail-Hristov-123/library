@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { LoginSchema } from "./login.schema.js";
+import { LoginSchema } from "./login.schema";
 
 export const UserSchema = LoginSchema.extend({
   name: z

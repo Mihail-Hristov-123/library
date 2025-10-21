@@ -1,9 +1,9 @@
 import z from "zod";
-import { BookSchema } from "../schemas/book.schema.js";
-import { BookRepository } from "../repositories/book.repository.js";
-import { CustomError } from "../CustomError.js";
+import { BookSchema } from "../schemas/book.schema";
+import { BookRepository } from "../repositories/book.repository";
+import { CustomError } from "../CustomError";
 
-class BookManager {
+export class BookManager {
   private booksRepository = new BookRepository();
 
   getAllBooks() {

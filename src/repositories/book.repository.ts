@@ -1,5 +1,5 @@
-import type { BookResponseType } from "../schemas/book.schema.js";
-import { BaseRepository } from "./base.repository.js";
+import type { BookResponseType } from "../schemas/book.schema";
+import { BaseRepository } from "./base.repository";
 
 export class BookRepository extends BaseRepository<BookResponseType> {
   protected tableName = "books" as const;

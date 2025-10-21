@@ -1,10 +1,10 @@
 import z from "zod";
-import { UserSchema } from "../schemas/user.schema.js";
+import { UserSchema } from "../schemas/user.schema";
 import * as bcrypt from "bcrypt";
-import { LoginSchema } from "../schemas/login.schema.js";
-import { CustomError } from "../CustomError.js";
-import { UserRepository } from "../repositories/user.repository.js";
-import { getSanitizedUserInfo } from "../utils/getSanitizedUserInfo.js";
+import { LoginSchema } from "../schemas/login.schema";
+import { CustomError } from "../CustomError";
+import { UserRepository } from "../repositories/user.repository";
+import { getSanitizedUserInfo } from "../utils/getSanitizedUserInfo";
 
 export class UserManager {
   private userRepository = new UserRepository();

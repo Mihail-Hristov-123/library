@@ -1,9 +1,9 @@
 import Router from "@koa/router";
-import { requireAuthentication } from "../middlewares/requireAuthentication.js";
-import { requireAuthorization } from "../middlewares/requireAuthorization.js";
-import { CustomError } from "../CustomError.js";
-import { handleMissingParam } from "../utils/handleMissingParam.js";
-import { bookManager } from "../services/book.service.js";
+import { requireAuthentication } from "../middlewares/requireAuthentication";
+import { requireAuthorization } from "../middlewares/requireAuthorization";
+import { CustomError } from "../CustomError";
+import { handleMissingParam } from "../utils/handleMissingParam";
+import { bookManager } from "../services/book.service";
 
 export const bookRouter = new Router({ prefix: "/books" });
 

@@ -1,5 +1,5 @@
 import type { Middleware } from "koa";
-import { CustomError } from "../CustomError.js";
+import { CustomError } from "../CustomError";
 
 export const errorHandler: Middleware = async (ctx, next) => {
   try {

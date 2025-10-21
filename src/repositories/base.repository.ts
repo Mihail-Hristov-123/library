@@ -1,5 +1,5 @@
 import knex from "knex";
-import devConfig from "../../knexfile.js";
+import devConfig from "../../knexfile";
 
 export abstract class BaseRepository<T> {
   protected abstract tableName: "users" | "books";
