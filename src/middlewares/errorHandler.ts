@@ -7,7 +7,7 @@ export const errorHandler: Middleware = async (ctx, next) => {
   } catch (error) {
     if (error instanceof AggregateError) {
       console.error("Multiple errors caught in middleware:");
-      error.errors.forEach(console.error);
+      error.errors.forEach((err) => console.error(err));
     } else {
       console.error("Error caught in middleware:", error);
     }
