@@ -25,7 +25,7 @@ describe("requireAuthentication middleware", () => {
     jest.clearAllMocks();
   });
 
-  it("throws if no token cookie", async () => {
+  it("should throw a CustomError if there's no token cookie", async () => {
     ctx.cookies.get.mockReturnValue(undefined);
 
     await expect(requireAuthentication(ctx, next)).rejects.toThrow(CustomError);
@@ -33,7 +33,7 @@ describe("requireAuthentication middleware", () => {
     expect(next).not.toHaveBeenCalled();
   });
 
-  it("throws if jwt.verify throws", async () => {
+  it("should throw a CustomError if jwt.verify throws", async () => {
     ctx.cookies.get.mockReturnValue("token");
     (jwt.verify as jest.Mock).mockImplementation(() => {
       throw new Error("Invalid token");
@@ -44,7 +44,7 @@ describe("requireAuthentication middleware", () => {
     expect(next).not.toHaveBeenCalled();
   });
 
-  it("throws if payload fails isExpectedJWTPayload", async () => {
+  it("should throw a CustomError if payload fails isExpectedJWTPayload", async () => {
     ctx.cookies.get.mockReturnValue("token");
     (jwt.verify as jest.Mock).mockReturnValue({ foo: "bar" });
     (isExpectedJWTPayload as unknown as jest.Mock).mockReturnValue(false);
@@ -54,7 +54,7 @@ describe("requireAuthentication middleware", () => {
     expect(next).not.toHaveBeenCalled();
   });
 
-  it("throws if user not found for payload email", async () => {
+  it("should throw a CustomError if user not found for payload email", async () => {
     ctx.cookies.get.mockReturnValue("token");
     const payload = { email: "user@example.com" };
     (jwt.verify as jest.Mock).mockReturnValue(payload);
@@ -66,7 +66,7 @@ describe("requireAuthentication middleware", () => {
     expect(next).not.toHaveBeenCalled();
   });
 
-  it("sets ctx userId and userEmail and calls next on success", async () => {
+  it("should set ctx userId and userEmail and call next on success", async () => {
     ctx.cookies.get.mockReturnValue("token");
     const payload = { email: "user@example.com" };
     const user = { id: 123, email: "user@example.com" };

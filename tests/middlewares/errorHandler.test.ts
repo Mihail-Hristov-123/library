@@ -18,7 +18,7 @@ describe("errorHandler middleware", () => {
     jest.restoreAllMocks();
   });
 
-  it("should call next and do nothing if no error thrown", async () => {
+  it("should call next and do nothing if no error is thrown", async () => {
     next.mockResolvedValueOnce(undefined);
 
     await errorHandler(ctx, next);

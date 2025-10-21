@@ -105,7 +105,7 @@ describe("BookManager", () => {
       ).rejects.toThrow(CustomError);
     });
 
-    it("should call updateById with validated data if all good", async () => {
+    it("should call updateById with validated data if all's good", async () => {
       bookRepositoryMock.getOneByProp.mockResolvedValueOnce(existingBook);
 
       const updatedBook = { id: 1, title: "Book1", author: "New Author" };

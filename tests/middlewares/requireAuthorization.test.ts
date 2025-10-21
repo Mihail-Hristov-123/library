@@ -23,7 +23,7 @@ describe("requireAuthorization middleware", () => {
     jest.clearAllMocks();
   });
 
-  it("calls requireAuthentication if ctx.userEmail is missing", async () => {
+  it("should call requireAuthentication if ctx.userEmail is missing", async () => {
     ctx.userEmail = undefined;
     ctx.params = { title: "Some Book" };
     ctx.userId = 1;
@@ -44,7 +44,7 @@ describe("requireAuthorization middleware", () => {
     expect(next).toHaveBeenCalled();
   });
 
-  it("throws if title param is missing", async () => {
+  it("should throw a CustomError if title param is missing", async () => {
     ctx.userEmail = "user@example.com";
     ctx.params = { title: undefined };
 
@@ -58,7 +58,7 @@ describe("requireAuthorization middleware", () => {
     expect(next).not.toHaveBeenCalled();
   });
 
-  it("throws if book not found", async () => {
+  it("should throw a CustomError if book is not found", async () => {
     ctx.userEmail = "user@example.com";
     ctx.params = { title: "My Book" };
     (handleMissingParam as jest.Mock).mockImplementation(() => {});
@@ -68,7 +68,7 @@ describe("requireAuthorization middleware", () => {
     expect(bookManager.findBook).toHaveBeenCalledWith("My Book");
   });
 
-  it("throws if book publisher_id does not match userId", async () => {
+  it("should throw a CustomError if book publisher_id does not match userId", async () => {
     ctx.userEmail = "user@example.com";
     ctx.userId = 1;
     ctx.params = { title: "My Book" };
