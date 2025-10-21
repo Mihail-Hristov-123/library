@@ -1,4 +1,4 @@
-import { CustomError } from "../CustomError.js";
+import { CustomError } from "../CustomError";
 
 export const handleMissingParam = (param: string | undefined) => {
   if (param == undefined || !param.trim()) {

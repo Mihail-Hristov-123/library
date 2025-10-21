@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import env from "../config/env.js";
-import { CustomError } from "../CustomError.js";
+import env from "../config/env";
+import { CustomError } from "../CustomError";
 
 export const signJWT = (email: string) => {
   try {

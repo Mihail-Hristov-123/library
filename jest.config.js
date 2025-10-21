@@ -1,6 +1,6 @@
 module.exports = {
   automock: false,
-  clearMocks: true,
+  resetMocks: true,
   collectCoverageFrom: ["src/**/*.ts", "!src/**/*.d.ts"],
   preset: "ts-jest",
   testEnvironment: "node",
@@ -13,6 +13,7 @@ module.exports = {
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
+  modulePaths: ["<rootDir>/src/"],
   coverageDirectory: "coverage",
   coverageThreshold: {
     global: {
